@@ -12,6 +12,7 @@ class latihanGrid extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: LinearGradient(colors: [Color.fromRGBO(200, 205, 219, 1), Color.fromARGB(198, 86, 164, 228)]),
       ),
+      child: SingleChildScrollView(
       child: Column(
         children: [
      Container(
@@ -130,7 +131,8 @@ class latihanGrid extends StatelessWidget {
           ),
               ],
             ),
+      )
           );
-       
+    
     }
 }
