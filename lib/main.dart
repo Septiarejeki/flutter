@@ -3,14 +3,21 @@ import 'package:belajar_flutter/gridview/grid_basic.dart';
 import 'package:belajar_flutter/gridview/latihan_grid.dart';
 import 'package:belajar_flutter/latihan_row.dart';
 import 'package:belajar_flutter/persib_latihan.dart';
+import 'package:belajar_flutter/register.dart';
 import 'package:belajar_flutter/rowcolumn.dart';
 import 'package:belajar_flutter/screens/about_screens.dart';
 import 'package:belajar_flutter/screens/fauna_screens.dart';
 import 'package:belajar_flutter/screens/home_screens.dart';
-import 'package:belajar_flutter/screens/output_formulir.dart';
+import 'package:belajar_flutter/output_booking.dart';
+import 'package:belajar_flutter/booking.dart';
+import 'package:belajar_flutter/login.dart';
+import 'package:belajar_flutter/register.dart';
+import 'package:belajar_flutter/output_register.dart';
+import 'package:belajar_flutter/output_login.dart';
 import 'package:belajar_flutter/form_screen.dart';
 import 'package:belajar_flutter/screens/detail_fauna_screens.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 // import 'navigasi.dart';
 
 // void main() {
@@ -125,30 +132,48 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: "Ini Project Flutter Pertamaku",
-      initialRoute: '/',
-      routes: {
-        '/': (context) => BottomNavigationMenu(),
-        '/about': (context) => AboutScreen(),
-        '/latihan': (context) => HomeScreen(),
-        '/form': (context) =>   ListFaunaScreen()
-      },
+      home: CheckAuth(),
     );
   }
 }
 
-class TextWidget extends StatelessWidget {
-  const TextWidget({
-    super.key,
-  });
+class CheckAuth extends StatefulWidget {
+  @override
+  _CheckAuthState createState() => _CheckAuthState();
+}
+
+class _CheckAuthState extends State<CheckAuth> {
+  bool isAuth = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfLoggedIn();
+  }
+
+  void _checkIfLoggedIn() async {
+    SharedPreferences localStorage = await SharedPreferences.getInstance();
+    var token = localStorage.getString('token');
+    if (token != null) {
+      if (mounted) {
+        setState(() {
+          isAuth = true;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text(
-        "Hello Dunia...\nHallo Candra.. ",
-        style: TextStyle(
-            color: Colors.pink, fontSize: 24, fontWeight: FontWeight.bold),
-      ),
+    Widget child;
+    if (isAuth) {
+      child = BottomNavigationMenu();
+    } else {
+      child = LoginScreen();
+    }
+
+    return Scaffold(
+      body: child,
     );
   }
 }
@@ -166,11 +191,9 @@ class _BottomNavigationMenuState extends State<BottomNavigationMenu> {
 
   List _pages = [
     HomeScreen(),
-    AboutScreen(),
-    LatihanForm (),
-    ListFaunaScreen(),
-   
-  
+    LatihanForm(),
+    LoginScreen(),
+    BelajarForm()
   ];
 
   _changeTab(int index) {
@@ -181,7 +204,6 @@ class _BottomNavigationMenuState extends State<BottomNavigationMenu> {
 
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
       body: _pages[_selectedTab],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedTab,
@@ -190,11 +212,12 @@ class _BottomNavigationMenuState extends State<BottomNavigationMenu> {
         unselectedItemColor: Colors.grey,
         items: [
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "About"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.grid_3x3_outlined), label: "Form"),
+              icon: Icon(Icons.view_stream), label: "Wisata"),
           BottomNavigationBarItem(
-              icon: Icon(Icons.contact_mail), label: "container"),
+              icon: Icon(Icons.payment), label: "Beli Tiket"),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.account_box), label: "Profil"),
         ],
       ),
     );

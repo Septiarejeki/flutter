@@ -1,166 +1,166 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:belajar_flutter/form_screen.dart';
+import 'package:belajar_flutter/helpers/size_helper.dart';
 import 'package:belajar_flutter/screens/output_formulir.dart';
+import 'package:intl/intl.dart';
+import 'package:flutter/material.dart';
 
-class LatihanForm extends StatefulWidget {
+class BelajarForm extends StatefulWidget {
   @override
-  State<LatihanForm> createState() => _LatihanFormState();
+  State<BelajarForm> createState() => _BelajarFormState();
 }
 
-class _LatihanFormState extends State<LatihanForm> {
+class _BelajarFormState extends State<BelajarForm> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController namaController = TextEditingController();
-  TextEditingController quantityController = TextEditingController();
-  TextEditingController bookingController = TextEditingController();
-  String _pilihTempatHewan = '';
-  String _hargaHewan = '';
-  String _imageHewan = '';
+  final scaffoldKey = GlobalKey<ScaffoldState>();
 
-  final List<Map<String, dynamic>> hewan = [
-    {
-      "tempat": "Taman Nasional Komodo",
-      "harga": "80000",
-      "image": "assets/img/komodo.jpg"
-    },
-    {
-      "tempat": "Taman Safari",
-      "harga": "30000",
-      "image": "assets/img/h2.jpg"
-    },
-    {
-      "tempat": "Lembang Park & Zoo",
-      "harga": "60000",
-      "image": "assets/img/orang.webp"
-    },
-    {
-      "tempat": "Taman Satwa",
-      "harga": "7000",
-      "image": "assets/img/kukang.jpg"
-    },
+  TextEditingController namaController = TextEditingController();
+  TextEditingController jkController = TextEditingController();
+  TextEditingController tglLahirController = TextEditingController();
+  String _pilihAgama = "";
+
+  final List<String> agama = [
+    "Islam",
+    "Protestand",
+    "Katholik",
+    "Budha",
+    "Hindu"
   ];
 
   void initState() {
+    tglLahirController.text = '';
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(),
-      body: Container(
-        padding: EdgeInsets.all(16),
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage("assets/img/background.jpg"),
-              fit: BoxFit.cover),
-        ),
-        child: Card(
-          elevation: 4,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Padding(
-            padding: EdgeInsets.all(16),
-            child: Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  Text(
-                    'Booking',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: namaController,
-                    decoration: InputDecoration(
-                      labelText: 'Nama Lengkap',
-                      border: OutlineInputBorder(),
+    return SafeArea(
+      child: Container(
+        height: double.infinity,
+        width: double.infinity,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Card(
+                elevation: 4,
+                margin: EdgeInsets.all(10),
+                shape: RoundedRectangleBorder(
+                  side: BorderSide(color: Colors.black),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Padding(
+                  padding: EdgeInsets.all(24),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Formulir Biodata"),
+                        SizedBox(height: 18),
+                        TextFormField(
+                          controller: namaController,
+                          decoration: InputDecoration(
+                            hintText: "Nama Lengkap",
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Input Nama';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 18),
+                        TextFormField(
+                          controller: jkController,
+                          decoration: InputDecoration(
+                            hintText: "Jenis Kelamin",
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Input Jenis Kelamin';
+                            }
+                            return null;
+                          },
+                        ),
+                        SizedBox(height: 18),
+                        TextFormField(
+                          controller: tglLahirController,
+                          decoration: InputDecoration(
+                            hintText: "Tanggal Lahir",
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            if (value!.isEmpty) {
+                              return 'Input Tanggal Lahir';
+                            }
+                            return null;
+                          },
+                          onTap: () async {
+                            DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(1900),
+                              lastDate: DateTime(2100),
+                            );
+                            if (pickedDate != null) {
+                              String tgl =
+                                  DateFormat('yyyy-MM-dd').format(pickedDate);
+                              setState(() {
+                                tglLahirController.text = tgl;
+                              });
+                            } else {
+                              print("Tanggal tidak dipilih");
+                            }
+                          },
+                        ),
+                        SizedBox(height: 18),
+                        DropdownButtonFormField(
+                          decoration: InputDecoration(
+                              hintText: "Agama",
+                              labelText: "Pilih Agama",
+                              border: OutlineInputBorder()),
+                          items: agama.map((String items) {
+                            int index = 0;
+                            return DropdownMenuItem(
+                              value: items,
+                              child: Text(items),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _pilihAgama = newValue!;
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          height: 18,
+                        ),
+                        SizedBox(
+                          width: displayWidth(context) * 0.8,
+                          height: displayHeight(context) * 0.05,
+                          child: ElevatedButton(
+                            style: ButtonStyle(
+                              shape: MaterialStateProperty.all<
+                                  RoundedRectangleBorder>(
+                                RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  side: BorderSide(color: Colors.white60),
+                                ),
+                              ),
+                            ),
+                            child: Text("Simpan"),
+                            onPressed: () {
+                              _submit();
+                            },
+                          ),
+                        )
+                      ],
                     ),
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter your name';
-                      }
-                      return null;
-                    },
                   ),
-                  SizedBox(height: 20),
-                  DropdownButtonFormField<Map<String, dynamic>>(
-                    decoration: InputDecoration(
-                      labelText: 'Pilih Tempat',
-                      border: OutlineInputBorder(),
-                    ),
-                    items: hewan.map((hewanData) {
-                      return DropdownMenuItem<Map<String, dynamic>>(
-                        value: hewanData,
-                        child: Text("${hewanData['tempat']}"),
-                      );
-                    }).toList(),
-                    onChanged: (Map<String, dynamic>? newValue) {
-                      setState(() {
-                        _pilihTempatHewan = newValue!['tempat'];
-                        _hargaHewan = newValue['harga'];
-                        _imageHewan = newValue['image'];
-                      });
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: quantityController,
-                    decoration: InputDecoration(
-                      labelText: 'Jumlah',
-                      border: OutlineInputBorder(),
-                    ),
-                    keyboardType: TextInputType.number,
-                    validator: (value) {
-                      if (value!.isEmpty) {
-                        return 'Please enter quantity';
-                      }
-                      return null;
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  TextFormField(
-                    controller: bookingController,
-                    decoration: InputDecoration(
-                      labelText: 'Tanggal Booking',
-                      border: OutlineInputBorder(),
-                    ),
-                    onTap: () async {
-                      DateTime? pickedDate = await showDatePicker(
-                        context: context,
-                        initialDate: DateTime.now(),
-                        firstDate: DateTime(2022),
-                        lastDate: DateTime(2100),
-                      );
-                      if (pickedDate != null) {
-                        String tgl =
-                            DateFormat('yyyy-MM-dd').format(pickedDate);
-                        setState(() {
-                          bookingController.text = tgl;
-                        });
-                      }
-                    },
-                  ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: () {
-                      _submit();
-                    },
-                    style: ElevatedButton.styleFrom(
-                      primary: Colors.amber,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: Text(
-                      'Pesan',
-                      style: TextStyle(fontSize: 16, color: Colors.white),
-                    ),
-                  ),
-                ],
+                ),
               ),
-            ),
+            ],
           ),
         ),
       ),
@@ -174,22 +174,14 @@ class _LatihanFormState extends State<LatihanForm> {
     } else {
       _formKey.currentState!.save();
       String nama = namaController.text;
-      String quantity = quantityController.text;
-      String tempatHewan = _pilihTempatHewan;
-      String hargaHewan = _hargaHewan;
-      String imageHewan = _imageHewan;
-      String booking = bookingController.text;
+      String jk = jkController.text;
+      String agama = _pilihAgama;
+      String tglLahir = tglLahirController.text;
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => LatihanOutput(
-            nama: nama,
-            quantity: quantity,
-            booking: booking,
-            tempatHewan: tempatHewan,
-            hargaHewan: hargaHewan,
-            imageHewan: imageHewan,
-          ),
+          builder: (context) => OutputFormScreen(
+              nama: nama, jk: jk, tgllahir: tglLahir, agama: agama),
         ),
       );
     }
